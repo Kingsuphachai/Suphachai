@@ -34,15 +34,22 @@
       <!-- ลิงก์แก้จัดการณ์ -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <a href="{{ route('admin.stations.index') }}"
-           class="block bg-gray-800 text-white p-6  shadow hover:bg-gray-900 transition">
+          class="block bg-gray-800 text-white p-6  shadow hover:bg-gray-900 transition">
           <div class="text-lg font-semibold">จัดการสถานี</div>
           <div class="mt-1 text-gray-200 text-sm">เพิ่ม แก้ไข หรือลบสถานี</div>
         </a>
-        <a href="{{ route('admin.users') }}"
-           class="block bg-gray-800 text-white p-6  shadow hover:bg-gray-900 transition">
+        <a href="{{ route('admin.users.index') }}"
+          class="block bg-gray-800 text-white p-6  shadow hover:bg-gray-900 transition">
           <div class="text-lg font-semibold">จัดการผู้ใช้</div>
           <div class="mt-1 text-gray-200 text-sm">แก้ไขข้อมูลสมาชิก</div>
         </a>
+        <a href="{{ route('admin.reports.index') }}"
+          class="block bg-gray-800 text-white p-6 shadow hover:bg-gray-900 transition">
+          <div class="text-lg font-semibold">รายงานปัญหา</div>
+          <div class="mt-1 text-gray-200 text-sm">ตรวจสอบ/ปิดงาน/ปฏิเสธ</div>
+        </a>
+
+
       </div>
 
     </div>

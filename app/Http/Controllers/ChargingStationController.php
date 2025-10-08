@@ -12,6 +12,15 @@ use Illuminate\Http\JsonResponse;
 
 class ChargingStationController extends Controller
 {
+    public function navigate($id)
+{
+    $station = \App\Models\ChargingStation::with('status')->findOrFail($id);
+
+    abort_unless($station->latitude && $station->longitude, 404, 'No coordinates');
+
+    return view('stations.navigate', compact('station'));
+}
+
     public function apiList()
 {
     // ดึงเฉพาะสถานีที่มีพิกัด และสถานะที่ให้แสดง (is_visible = 1)
@@ -42,24 +51,35 @@ class ChargingStationController extends Controller
     public function apiStations(): JsonResponse
     {
         $stations = ChargingStation::query()
-            ->with(['status:id,name', 'district:id,name', 'subdistrict:id,name'])
+            ->with(['status:id,name', 'district:id,name,province_name,zipcode', 'subdistrict:id,name,district_id', 'chargers:id,name',])
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->get([
                 'id','name','address','latitude','longitude',
-                'status_id','district_id','subdistrict_id'
+            'status_id','district_id','subdistrict_id',
+            'image','operating_hours',
             ])
             ->map(function ($s) {
-                return [
-                    'id' => $s->id,
-                    'name' => $s->name,
-                    'address' => $s->address,
-                    'lat' => (float) $s->latitude,
-                    'lng' => (float) $s->longitude,
-                    'status' => $s->status->name ?? '-',
-                    'district' => $s->district->name ?? null,
-                    'subdistrict' => $s->subdistrict->name ?? null,
-                ];
+                            return [
+                'id'              => $s->id,
+                'name'            => $s->name,
+                'address'         => $s->address,
+                'lat'             => (float) $s->latitude,
+                'lng'             => (float) $s->longitude,
+
+                'status'          => $s->status->name ?? '-',
+
+                // 👉 ที่อยู่ย่อยครบ
+                'subdistrict'     => $s->subdistrict->name ?? null,           // ตำบล
+                'district'        => $s->district->name ?? null,              // อำเภอ
+                'province'        => $s->district->province_name ?? null,     // จังหวัด
+                'postcode'        => $s->district->zipcode ?? null,           // รหัสไปรษณีย์
+
+                'operating_hours' => $s->operating_hours,                     // เวลาทำการ
+                'image_url'       => $s->image_url
+                    ?? ($s->image ? asset('storage/'.$s->image) : null),
+                'chargers'        => $s->chargers?->pluck('name')->values() ?? [],
+            ];
             });
 
         return response()->json($stations);
