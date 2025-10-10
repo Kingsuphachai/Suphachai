@@ -3,13 +3,27 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
 
-            {{-- ซ้าย: โลโก้ / หน้าแรก --}}
             <div class="flex items-center">
-                <a href="{{ route('stations.map') }}"
-                    class="text-lg sm:text-xl font-semibold text-gray-800 hover:text-indigo-600">
-                    EV Charging
+                <a href="
+    @auth
+        {{ auth()->user()->role->name === 'admin'
+        ? route('admin.dashboard')
+        : route('user.dashboard') }}
+    @else
+        {{ route('welcome') }}
+    @endauth
+" class="flex items-center gap-2 hover:opacity-90 transition">
+
+                    <img src="{{ asset('images/ev-logo.png') }}" alt="EV Logo"
+                        class="h-9 w-auto transition-transform duration-300 group-hover:scale-105]" />
+                    <span class="text-2xl font-bold text-gray-800">
+                        Charging
+                    </span>
                 </a>
             </div>
+
+
+
 
             <!-- กลาง: ช่องค้นหาแบบยาว อยู่กึ่งกลาง -->
             {{-- (ภายใน navigation.blade.php เฉพาะส่วนกลางฟอร์มค้นหา) --}}
@@ -47,7 +61,7 @@
                             <x-slot name="trigger">
                                 <button
                                     class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4
-                                                               font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition">
+                                                                                                   font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition">
                                     <div>ยินดีต้อนรับคุณ {{ Auth::user()?->name }}</div>
                                     <div class="ms-1">
                                         <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
@@ -60,27 +74,18 @@
                             </x-slot>
 
                             <x-slot name="content">
-                                <div class="pt-2 pb-3 space-y-1">
-                                    <x-responsive-nav-link :href="route('dashboard')"
-                                        :active="request()->routeIs('dashboard')">
-                                        {{ __('Dashboard') }}
-                                    </x-responsive-nav-link>
-                                    <x-responsive-nav-link :href="route('stations.index')"
-                                        :active="request()->routeIs('stations.*')">
-                                        {{ __('Stations') }}
-                                    </x-responsive-nav-link>
-                                </div>
 
                                 <div class="px-4">
                                     <div class="font-medium text-base text-gray-800">{{ Auth::user()?->name }}</div>
                                     <div class="font-medium text-sm text-gray-500">{{ Auth::user()?->email }}</div>
                                 </div>
-                                <x-dropdown-link :href="route('profile.edit')">{{ __('Profile') }}</x-dropdown-link>
+                                <div class="border-t border-gray-200 mt-3 pt-3"></div>
+                                <x-dropdown-link :href="route('profile.edit')">{{ __('โปรไฟล์ผู้ใช้') }}</x-dropdown-link>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <x-dropdown-link :href="route('logout')"
                                         onclick="event.preventDefault(); this.closest('form').submit();">
-                                        {{ __('Log Out') }}
+                                        {{ __('ออกจากระบบ') }}
                                     </x-dropdown-link>
                                 </form>
                             </x-slot>
@@ -90,10 +95,10 @@
 
                 @guest
                     <div class="flex items-center gap-4">
-                        <a href="{{ route('login') }}" class="">{{ __('Log in') }}</a>
+                        <a href="{{ route('login') }}" class="">{{ __('เข้าสู่ระบบ') }}</a>
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}" class="">
-                                {{ __('Register') }}
+                                {{ __('ลงทะเบียน') }}
                             </a>
                         @endif
                     </div>
@@ -119,28 +124,20 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         @auth
-            <div class="pt-2 pb-3 space-y-1">
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('stations.index')" :active="request()->routeIs('stations.*')">
-                    {{ __('Stations') }}
-                </x-responsive-nav-link>
-            </div>
 
             <div class="pt-4 pb-1 border-t border-gray-200">
                 <div class="px-4">
                     <div class="font-medium text-base text-gray-800">{{ Auth::user()?->name }}</div>
                     <div class="font-medium text-sm text-gray-500">{{ Auth::user()?->email }}</div>
                 </div>
-
+                <div class="border-t border-gray-200 mt-3 pt-3"></div>
                 <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('profile.edit')">{{ __('Profile') }}</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('profile.edit')">{{ __('โปรไฟล์ผู้ใช้') }}</x-responsive-nav-link>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault(); this.closest('form').submit();">
-                            {{ __('Log Out') }}
+                            {{ __('ออกจากระบบ') }}
                         </x-responsive-nav-link>
                     </form>
                 </div>
@@ -150,11 +147,11 @@
         @guest
             <div class="pt-2 pb-3 space-y-1">
                 <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')">
-                    {{ __('Log in') }}
+                    {{ __('เข้าสู่ระบบ') }}
                 </x-responsive-nav-link>
                 @if (Route::has('register'))
                     <x-responsive-nav-link :href="route('register')" :active="request()->routeIs('register')">
-                        {{ __('Register') }}
+                        {{ __('ลงทะเบียน') }}
                     </x-responsive-nav-link>
                 @endif
             </div>

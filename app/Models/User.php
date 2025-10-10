@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes; 
 use Illuminate\Notifications\Notifiable;
 
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -57,8 +58,10 @@ class User extends Authenticatable
         return $this->hasMany(Report::class);
     }
 
-    public function notifications()
+    // ✅ ใช้ role_id = 2 เป็นแอดมิน
+    public function scopeAdmins($q)
     {
-        return $this->hasMany(Notification::class);
+        return $q->where('role_id', 2);
     }
+
 }

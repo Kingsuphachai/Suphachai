@@ -10,6 +10,7 @@ use App\Models\StationStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
+
 class ChargingStationController extends Controller
 {
     public function navigate($id)
@@ -54,6 +55,7 @@ class ChargingStationController extends Controller
             ->with(['status:id,name', 'district:id,name,province_name,zipcode', 'subdistrict:id,name,district_id', 'chargers:id,name',])
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
+            ->where('status_id', '<>', 0)
             ->get([
                 'id','name','address','latitude','longitude',
             'status_id','district_id','subdistrict_id',
@@ -69,7 +71,7 @@ class ChargingStationController extends Controller
 
                 'status'          => $s->status->name ?? '-',
 
-                // 👉 ที่อยู่ย่อยครบ
+        
                 'subdistrict'     => $s->subdistrict->name ?? null,           // ตำบล
                 'district'        => $s->district->name ?? null,              // อำเภอ
                 'province'        => $s->district->province_name ?? null,     // จังหวัด

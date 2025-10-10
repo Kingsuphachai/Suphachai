@@ -7,7 +7,13 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ChargingStationController;
 use App\Http\Controllers\Admin\StationController; // สำหรับสถานี
 use App\Http\Controllers\Admin\UserController as AdminUserController; // ✅ เพิ่มบรรทัดนี้
-use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\ReportController as UserReportController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/reports/create',  [UserReportController::class, 'create'])->name('user.reports.create');
+    Route::post('/reports',        [UserReportController::class, 'store'])->name('user.reports.store');
+});
 
 // -------------------------------
 // Admin (ต้องเป็นแอดมินเท่านั้น)
@@ -17,21 +23,38 @@ Route::middleware(['auth', 'is_admin'])
     ->name('admin.')
     ->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-        Route::resource('stations', StationController::class);
+        
+
+            // Pending stations
+        Route::get('/stations/pending',           [StationController::class, 'pending'])->name('stations.pending');
+        Route::post('/stations/{id}/approve',     [StationController::class, 'approve'])->name('stations.approve');
+        Route::delete('/stations/{id}/reject',    [StationController::class, 'reject'])->name('stations.reject');
+
+            // resource
+        Route::resource('stations', \App\Http\Controllers\Admin\StationController::class)
+            ->where(['station' => '[0-9]+']);
+    
+            // ศูนย์แจ้งเตือนแอดมิน
+        Route::get('/notifications', [\App\Http\Controllers\Admin\AdminNotificationController::class,'index'])
+            ->name('notifications.index');
+        Route::post('/notifications/read-all', [\App\Http\Controllers\Admin\AdminNotificationController::class,'readAll'])
+            ->name('notifications.read_all');
 
         // Reports
-        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-        Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
-        Route::post('/reports/{report}/resolve', [ReportController::class, 'resolve'])->name('reports.resolve');
-        Route::post('/reports/{report}/reject',  [ReportController::class, 'reject'])->name('reports.reject');
-        Route::delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
- 
+        Route::get('/reports',                 [AdminReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/{report}',        [AdminReportController::class, 'show'])->name('reports.show');
+        Route::post('/reports/{report}/resolve',[AdminReportController::class, 'resolve'])->name('reports.resolve');
+        Route::post('/reports/{report}/reject', [AdminReportController::class, 'reject'])->name('reports.reject');
+        Route::delete('/reports/{report}',     [AdminReportController::class, 'destroy'])->name('reports.destroy');
+
         //  Users (index/edit/update/destroy/restore)
         Route::get('users',               [AdminUserController::class, 'index'])->name('users.index');
         Route::get('users/{user}/edit',   [AdminUserController::class, 'edit'])->name('users.edit');
         Route::put('users/{user}',        [AdminUserController::class, 'update'])->name('users.update');
         Route::delete('users/{user}',     [AdminUserController::class, 'destroy'])->name('users.destroy');
         Route::post('users/{id}/restore', [AdminUserController::class, 'restore'])->name('users.restore');
+
+
     });
 
 // -------------------------------
@@ -54,7 +77,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 // หน้าแรก
-Route::get('/', fn() => view('welcome'));
+Route::get('/', function () {
+    return view('welcome');
+})->name('welcome');
 
 // Profile
 Route::middleware('auth')->group(function () {

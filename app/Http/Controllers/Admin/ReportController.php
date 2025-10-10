@@ -9,54 +9,71 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+    // รายการ + ฟิลเตอร์เบื้องต้น
     public function index(Request $request)
     {
-        // ฟิลเตอร์เบื้องต้น
         $request->validate([
-            'status' => ['nullable','in:all,pending,resolved,rejected'],
-            'q'      => ['nullable','string','max:255'],
+            'status'     => ['nullable', 'in:all,0,1,2'],
+            'station_id' => ['nullable', 'integer'],
+            'q'          => ['nullable', 'string', 'max:255'],
         ]);
 
-        $query = Report::query()->with(['user','station']);
+        $q = Report::query()
+            ->with(['user:id,name,email', 'station:id,name']);
 
-        // สถานะ
-        $status = $request->input('status','pending');
-        if ($status === 'resolved')   $query->where('status', 1);
-        elseif ($status === 'rejected') $query->where('status', 2);
-        elseif ($status === 'pending')  $query->where('status', 0);
+        // ฟิลเตอร์สถานะ (0=รอตรวจสอบ,1=ปิดงานแล้ว,2=ปฏิเสธ)
+        if (($request->status ?? 'all') !== 'all') {
+            $q->where('status', (int)$request->status);
+        }
 
-        // ค้นหาจากข้อความ
+        // ฟิลเตอร์ตามสถานี
+        if ($request->filled('station_id')) {
+            $q->where('station_id', $request->station_id);
+        }
+
+        // ค้นหาจากข้อความแจ้ง (message) หรือประเภท (type)
         if ($request->filled('q')) {
             $kw = trim($request->q);
-            $query->where(function($q) use ($kw) {
-                $q->where('type','like',"%$kw%")
-                  ->orWhere('message','like',"%$kw%");
+            $q->where(function($sub) use ($kw) {
+                $sub->where('message','like',"%{$kw}%")
+                    ->orWhere('type','like',"%{$kw}%");
             });
         }
 
-        $reports = $query->orderBy('id','desc')->paginate(15)->withQueryString();
+        $reports  = $q->orderByDesc('id')->paginate(15)->withQueryString();
+        $stations = ChargingStation::orderBy('name')->get(['id','name']);
 
-        return view('admin.reports.index', compact('reports', 'status'));
+        return view('admin.reports.index', compact('reports','stations'));
     }
 
+    // รายละเอียดรายงาน
     public function show(Report $report)
     {
-        $report->load(['user','station']);
+        $report->load(['user:id,name,email', 'station']);
         return view('admin.reports.show', compact('report'));
     }
 
+    // ปิดงาน (แก้ไขเสร็จแล้ว)
     public function resolve(Report $report)
     {
-        $report->update(['status' => 1]);
+        if ($report->status !== 1) {
+            $report->status = 1; // ปิดงานแล้ว
+            $report->save();
+        }
         return redirect()->route('admin.reports.show', $report)->with('success', 'ปิดงานรายงานนี้เรียบร้อย');
     }
 
+    // ปฏิเสธรายงาน
     public function reject(Report $report)
     {
-        $report->update(['status' => 2]);
+        if ($report->status !== 2) {
+            $report->status = 2; // ปฏิเสธ
+            $report->save();
+        }
         return redirect()->route('admin.reports.show', $report)->with('success', 'ปฏิเสธรายงานนี้เรียบร้อย');
     }
 
+    // ลบรายงาน (ถ้าต้องการ)
     public function destroy(Report $report)
     {
         $report->delete();

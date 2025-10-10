@@ -6,28 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Report extends Model
 {
-    protected $fillable = [
-        'user_id', 'station_id', 'type', 'message', 'status',
-    ];
-
-    // ความสัมพันธ์
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    public $timestamps = false; // ตารางนี้มีเฉพาะ created_at ตาม dump (ถ้ามี updated_at ด้วย ให้ลบบรรทัดนี้)
+    protected $fillable = ['user_id', 'station_id', 'type', 'message', 'status'];
 
     public function station()
     {
         return $this->belongsTo(ChargingStation::class, 'station_id');
     }
 
-    // helper ง่าย ๆ
-    public function getStatusTextAttribute()
+    public function user()
     {
-        return match ((int) $this->status) {
-            1 => 'ปิดงานแล้ว',
-            2 => 'ปฏิเสธ',
-            default => 'รอตรวจสอบ',
-        };
+        return $this->belongsTo(User::class);
     }
+        protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        // ถ้ามีฟิลด์เวลาอื่นๆ ก็ใส่ได้ เช่น:
+        // 'reported_at' => 'datetime',
+    ];
 }

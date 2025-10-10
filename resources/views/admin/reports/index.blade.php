@@ -1,77 +1,99 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800">รายงานปัญหาสถานีชาร์จ</h2>
-    </x-slot>
+  <x-slot name="header">
+    <h2 class="font-semibold text-xl text-gray-800">จัดการรายงานปัญหา</h2>
+  </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+  <div class="py-6">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
 
-            @if(session('success'))
-                <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">
-                    {{ session('success') }}
-                </div>
-            @endif
+      @if(session('success'))
+        <div class="p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
+      @endif
 
-            {{-- ฟิลเตอร์ --}}
-            <form method="GET" class="mb-4 flex gap-2 items-center">
-                <select name="status" class="border rounded p-2">
-                    <option value="all" {{ request('status','pending')=='all'?'selected':'' }}>ทั้งหมด</option>
-                    <option value="pending" {{ request('status','pending')=='pending'?'selected':'' }}>รอตรวจสอบ</option>
-                    <option value="resolved" {{ request('status')=='resolved'?'selected':'' }}>ปิดงานแล้ว</option>
-                    <option value="rejected" {{ request('status')=='rejected'?'selected':'' }}>ปฏิเสธ</option>
-                </select>
-
-                <input type="text" name="q" value="{{ request('q') }}" placeholder="ค้นหา (ประเภท/ข้อความ)" class="border rounded p-2 w-64">
-                <button class="px-4 py-2 border rounded">ค้นหา</button>
-            </form>
-
-            <div class="bg-white shadow sm:rounded-lg p-6">
-                <table class="w-full border">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="p-2 border">วันที่</th>
-                            <th class="p-2 border">ผู้แจ้ง</th>
-                            <th class="p-2 border">สถานี</th>
-                            <th class="p-2 border">ประเภท</th>
-                            <th class="p-2 border">สถานะ</th>
-                            <th class="p-2 border">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($reports as $r)
-                            <tr>
-                                <td class="p-2 border">{{ $r->created_at }}</td>
-                                <td class="p-2 border">{{ $r->user->name ?? '-' }}</td>
-                                <td class="p-2 border">{{ $r->station->name ?? '-' }}</td>
-                                <td class="p-2 border">{{ $r->type ?? '-' }}</td>
-                                <td class="p-2 border">
-                                    @php
-                                        $badge = match((int)$r->status){
-                                            1 => 'bg-green-100 text-green-800',
-                                            2 => 'bg-red-100 text-red-800',
-                                            default => 'bg-yellow-100 text-yellow-800',
-                                        };
-                                    @endphp
-                                    <span class="px-2 py-1 rounded text-sm {{ $badge }}">
-                                        {{ $r->status_text }}
-                                    </span>
-                                </td>
-                                <td class="p-2 border">
-                                    <a href="{{ route('admin.reports.show', $r) }}" class="text-blue-600 hover:underline">
-                                        ดูรายละเอียด
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="6" class="p-3 text-center text-gray-500">ไม่มีรายงาน</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-
-                <div class="mt-4">
-                    {{ $reports->links() }}
-                </div>
-            </div>
+      {{-- ฟิลเตอร์ --}}
+      <form method="GET" class="bg-white p-4 rounded shadow flex flex-wrap gap-3 items-end">
+        <div>
+          <label class="block text-sm text-gray-600">สถานะ</label>
+          <select name="status" class="border rounded px-3 py-2">
+            @php $sel = request('status','all'); @endphp
+            <option value="all" @selected($sel==='all')>ทั้งหมด</option>
+            <option value="0"   @selected($sel==='0')>รอตรวจสอบ</option>
+            <option value="1"   @selected($sel==='1')>ปิดงานแล้ว</option>
+            <option value="2"   @selected($sel==='2')>ปฏิเสธ</option>
+          </select>
         </div>
+
+        <div>
+          <label class="block text-sm text-gray-600">สถานี</label>
+          <select name="station_id" class="border rounded px-3 py-2">
+            <option value="">ทั้งหมด</option>
+            @foreach($stations as $st)
+              <option value="{{ $st->id }}" @selected((int)request('station_id')===$st->id)>
+                {{ $st->name }}
+              </option>
+            @endforeach
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm text-gray-600">ค้นหา</label>
+          <input type="text" name="q" value="{{ request('q') }}" class="border rounded px-3 py-2" placeholder="ข้อความ/ประเภท">
+        </div>
+
+        <div>
+          <button class="px-4 py-2 bg-indigo-600 text-white rounded">ค้นหา</button>
+          @if(request()->hasAny(['status','station_id','q']) && (request('status')!=='all' || request('station_id') || request('q')))
+            <a href="{{ route('admin.reports.index') }}" class="px-4 py-2 border rounded">ล้างตัวกรอง</a>
+          @endif
+        </div>
+      </form>
+
+      {{-- ตาราง --}}
+      <div class="bg-white rounded shadow overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-3 py-2 text-left">วันที่</th>
+              <th class="px-3 py-2 text-left">ผู้ส่ง</th>
+              <th class="px-3 py-2 text-left">สถานี</th>
+              <th class="px-3 py-2 text-left">ประเภท</th>
+              <th class="px-3 py-2 text-left">สถานะ</th>
+              <th class="px-3 py-2 text-left">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody>
+          @forelse($reports as $r)
+            <tr class="border-t">
+              <td class="px-3 py-2">{{ $r->created_at?->format('Y-m-d H:i') }}</td>
+              <td class="px-3 py-2">{{ $r->user->name ?? '-' }}</td>
+              <td class="px-3 py-2">{{ $r->station->name ?? '-' }}</td>
+              <td class="px-3 py-2">
+                @php $types = ['no_power'=>'ไม่มีไฟ', 'occupied'=>'ไม่ว่าง', 'broken'=>'ชำรุด', 'other'=>'อื่น ๆ']; @endphp
+                {{ $types[$r->type] ?? $r->type }}
+              </td>
+              <td class="px-3 py-2">
+                @php
+                  $badge = ['0'=>'bg-yellow-100 text-yellow-800','1'=>'bg-green-100 text-green-800','2'=>'bg-red-100 text-red-800'][$r->status] ?? 'bg-gray-100';
+                  $label = ['0'=>'รอตรวจสอบ','1'=>'ปิดงานแล้ว','2'=>'ปฏิเสธ'][$r->status] ?? '-';
+                @endphp
+                <span class="px-2 py-1 rounded text-xs {{ $badge }}">{{ $label }}</span>
+              </td>
+              <td class="px-3 py-2">
+                <a href="{{ route('admin.reports.show', $r) }}" class="px-3 py-1 bg-slate-600 text-white rounded">ดู</a>
+                <form action="{{ route('admin.reports.destroy', $r) }}" method="POST" class="inline" onsubmit="return confirm('ยืนยันลบรายงานนี้?');">
+                  @csrf @method('DELETE')
+                  <button class="px-3 py-1 bg-red-600 text-white rounded">ลบ</button>
+                </form>
+              </td>
+            </tr>
+          @empty
+            <tr><td colspan="6" class="px-3 py-6 text-center text-gray-500">ไม่มีรายการ</td></tr>
+          @endforelse
+          </tbody>
+        </table>
+      </div>
+
+      <div>{{ $reports->links() }}</div>
     </div>
+  </div>
 </x-app-layout>

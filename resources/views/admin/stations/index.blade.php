@@ -7,63 +7,78 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow sm:rounded-lg p-6">
                 <div class="mb-4">
-                    {{-- แถบเครื่องมือ: ฟิลเตอร์ (ซ้าย) + ปุ่มเพิ่ม (ขวา) --}}
-                    <div class="bg-white p-4 rounded shadow">
-                        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+    {{-- แถบเครื่องมือ: ฟิลเตอร์ (ซ้าย) + ปุ่มเพิ่ม (ขวา) --}}
+    <div class="bg-white p-4 rounded-xl shadow">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
 
-                            {{-- ฟอร์มฟิลเตอร์ (ซ้าย) --}}
-                            <form method="GET" class="flex flex-wrap gap-3 items-end">
-                                <div>
-                                    <label class="block text-sm text-gray-600">ค้นหาชื่อสถานี</label>
-                                    <input type="text" name="q" value="{{ $filters['q'] ?? '' }}"
-                                        class="border rounded px-3 py-2" placeholder="เช่น ปตท., กฟภ.">
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm text-gray-600">สถานะ</label>
-                                    <select name="status_id" class="border rounded px-3 py-2">
-                                        <option value="">ทั้งหมด</option>
-                                        @foreach ($statuses as $s)
-                                            <option value="{{ $s->id }}" @selected(($filters['status_id'] ?? '') !== '' && (int) ($filters['status_id']) === $s->id)>
-                                                {{ $s->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm text-gray-600">อำเภอ</label>
-                                    <select name="district_id" class="border rounded px-3 py-2">
-                                        <option value="">ทั้งหมด</option>
-                                        @foreach ($districts as $d)
-                                            <option value="{{ $d->id }}" @selected(($filters['district_id'] ?? '') !== '' && (int) ($filters['district_id']) === $d->id)>
-                                                {{ $d->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="flex gap-2">
-                                    <button class="px-4 py-2 bg-indigo-600 text-white rounded">ค้นหา</button>
-                                    @if(($filters['q'] ?? '') !== '' || ($filters['status_id'] ?? '') !== '' || ($filters['district_id'] ?? '') !== '')
-                                        <a href="{{ route('admin.stations.index') }}"
-                                            class="px-4 py-2 border rounded">ล้างตัวกรอง</a>
-                                    @endif
-                                </div>
-                            </form>
-
-                            {{-- ปุ่มเพิ่มสถานี (ขวา) --}}
-                            <div class="md:self-end">
-                                <a href="{{ route('admin.stations.create') }}"
-                                    class="inline-block px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900">
-                                    + เพิ่มสถานี
-                                </a>
-                            </div>
-
-                        </div>
-                    </div>
-
+            <!-- ส่วนฟิลเตอร์ -->
+            <form method="GET" class="flex flex-wrap items-end gap-3 flex-1">
+                <!-- ค้นหา -->
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">ค้นหาชื่อสถานี</label>
+                    <input type="text" name="q" value="{{ $filters['q'] ?? '' }}"
+                        class="border border-gray-300 rounded-lg px-3 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="เช่น ปตท., กฟภ.">
                 </div>
+
+                <!-- สถานะ -->
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">สถานะ</label>
+                    <select name="status_id"
+                        class="border border-gray-300 rounded-lg px-3 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">ทั้งหมด</option>
+                        @foreach ($statuses as $s)
+                            <option value="{{ $s->id }}"
+                                @selected(($filters['status_id'] ?? '') !== '' && (int) ($filters['status_id']) === $s->id)>
+                                {{ $s->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- อำเภอ -->
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">อำเภอ</label>
+                    <select name="district_id"
+                        class="border border-gray-300 rounded-lg px-3 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">ทั้งหมด</option>
+                        @foreach ($districts as $d)
+                            <option value="{{ $d->id }}"
+                                @selected(($filters['district_id'] ?? '') !== '' && (int) ($filters['district_id']) === $d->id)>
+                                {{ $d->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- ปุ่มค้นหา / ล้าง -->
+                <div class="flex items-end gap-2">
+                    <button
+                        class="px-5 py-2 bg-gray-800  text-white rounded-lg hover:bg-gray-700 focus:ring-2 focus:ring-gray-400">
+                        ค้นหา
+                    </button>
+                    @if(($filters['q'] ?? '') !== '' || ($filters['status_id'] ?? '') !== '' || ($filters['district_id'] ?? '') !== '')
+                        <a href="{{ route('admin.stations.index') }}"
+                            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            ล้างตัวกรอง
+                        </a>
+                    @endif
+                </div>
+            </form>
+
+            <!-- ปุ่มเพิ่มสถานี -->
+            <div class="flex justify-end">
+                <a href="{{ route('admin.stations.create') }}"
+                    class="inline-block px-5 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition">
+                    + เพิ่มสถานี
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 
                 <table class="w-full border">
                     <thead>
