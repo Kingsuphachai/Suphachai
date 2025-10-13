@@ -63,8 +63,7 @@
         if (/(ชำรุด|เสีย|ปิด|out\s*of\s*service|down)/.test(t)) return ICONS.red;
         return ICONS.blue;
       }
-
-      /* ===================== InfoWindow ===================== */
+      // info รายละเอียด
       function infoHtml(s) {
         const addressLine = joinNonEmpty([
           safeText(s.address, ''),
@@ -75,25 +74,41 @@
         ], ' ');
         const chargers = Array.isArray(s.chargers) ? s.chargers.join(' • ') : (s.chargers || '');
         const imgSrc = s.image_url || PLACEHOLDER;
+        
+
+        // ✅ ดึง role จาก Blade (ฝังลงใน JS)
+        const userRole = @json(auth()->user()->role->name ?? 'guest');
+
+        // ✅ เงื่อนไขแยกปุ่มตาม role
+        let extraButton = '';
+        if (userRole === 'admin') {
+          extraButton = `<a href="/admin/stations/${s.id}/edit"
+                        class="text-blue-600 underline">แก้ไข</a>`;
+        } else if (userRole === 'user') {
+          extraButton = `<a href="/reports/create?station_id=${s.id}"
+                        class="text-amber-600 underline">แจ้งปัญหา</a>`;
+        }
 
         return `
-              <div style="min-width:260px;max-width:320px">
-                <div style="margin:-8px -8px 8px -8px;">
-                  <img src="${imgSrc}" alt="${s.name ?? ''}"
-                       style="width:100%;height:150px;object-fit:cover;border-radius:8px 8px 0 0;" loading="lazy">
-                </div>
-                <div style="font-weight:700;font-size:15px">${safeText(s.name)}</div>
-                <div style="font-size:13px;color:#374151;margin-top:2px">${addressLine || '-'}</div>
-                <div style="font-size:13px;margin-top:6px">
-                  <div><b>สถานะ:</b> ${safeText(s.status)}</div>
-                  <div><b>เวลาทำการ:</b> ${safeText(s.operating_hours, 'ไม่ระบุ')}</div>
-                  <div><b>ประเภทหัวชาร์จ:</b> ${chargers ? chargers : '-'}</div>
-                </div>
-                <div class="mt-2 flex justify-end gap-2">
-                  <a href="${SHOW_BASE_URL}/${s.id}/navigate" class="text-black underline">นำทาง</a>
-                </div>
-              </div>`;
+      <div style="min-width:260px;max-width:320px">
+        <div style="margin:-8px -8px 8px -8px;">
+          <img src="${imgSrc}" alt="${s.name ?? ''}"
+               style="width:100%;height:150px;object-fit:cover;border-radius:8px 8px 0 0;" loading="lazy">
+        </div>
+        <div style="font-weight:700;font-size:15px">${safeText(s.name)}</div>
+        <div style="font-size:13px;color:#374151;margin-top:2px">${addressLine || '-'}</div>
+        <div style="font-size:13px;margin-top:6px">
+          <div><b>สถานะ:</b> ${safeText(s.status)}</div>
+          <div><b>เวลาทำการ:</b> ${safeText(s.operating_hours, 'ไม่ระบุ')}</div>
+          <div><b>ประเภทหัวชาร์จ:</b> ${chargers ? chargers : '-'}</div>
+        </div>
+        <div class="mt-3 flex justify-between items-center text-sm font-medium">
+          <a href="${SHOW_BASE_URL}/${s.id}/navigate" class="text-black underline">นำทาง</a>
+          ${extraButton}
+        </div>
+      </div>`;
       }
+
 
       /* ===================== โฟกัส & เปิด InfoWindow ===================== */
       function openStation(station, zoom = 15) {
@@ -136,15 +151,15 @@
         if (!list.length) { box.classList.add('hidden'); box.innerHTML = ''; return; }
 
         box.innerHTML = list.slice(0, 20).map(item => `
-              <button type="button" class="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-start gap-2" data-id="${item.id}">
-                <div class="mt-1">📍</div>
-                <div class="flex-1">
-                  <div class="font-medium">${item.name}</div>
-                  <div class="text-xs text-gray-500">${item._addr || ''}</div>
-                  <div class="text-xs">${item._dist ? (item._dist.toFixed(1) + ' กม.') : ''}</div>
-                </div>
-              </button>
-            `).join('');
+                <button type="button" class="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-start gap-2" data-id="${item.id}">
+                  <div class="mt-1">📍</div>
+                  <div class="flex-1">
+                    <div class="font-medium">${item.name}</div>
+                    <div class="text-xs text-gray-500">${item._addr || ''}</div>
+                    <div class="text-xs">${item._dist ? (item._dist.toFixed(1) + ' กม.') : ''}</div>
+                  </div>
+                </button>
+              `).join('');
         box.classList.remove('hidden');
 
         [...box.querySelectorAll('button[data-id]')].forEach(btn => {
