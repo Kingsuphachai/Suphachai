@@ -4,7 +4,9 @@
     </x-slot>
 
     <div class="py-6">
+      
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+        
         <form method="GET" class="bg-white p-4 rounded shadow flex flex-wrap gap-3 items-end">
             <div>
                 <label class="block text-sm text-gray-600">ค้นหาชื่อสถานี</label>
@@ -76,4 +78,5 @@
         <div>{{ $stations->links() }}</div>
       </div>
     </div>
+    
 </x-app-layout>

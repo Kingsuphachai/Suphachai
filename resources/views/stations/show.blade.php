@@ -8,7 +8,7 @@
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
       <div class="bg-white shadow sm:rounded-lg p-6 space-y-4">
         <h3 class="text-lg font-semibold text-gray-700">รายละเอียดสถานี</h3>
-        <a href="{{ route('user.reports.create', ['station' => $station->id]) }}"
+        <a href="{{ route('reports.create', ['station' => $station->id]) }}"
           class="inline-block px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">
           แจ้งปัญหาสถานีนี้
         </a>
@@ -136,15 +136,15 @@
               const li = document.createElement('li');
               li.className = 'p-2 bg-white rounded border';
               li.innerHTML = `
-                  <div class="flex items-start gap-2">
-                    <div class="text-xl leading-none">${arrowFor(st.maneuver || st.instructions)}</div>
-                    <div class="flex-1">
-                      <div class="leading-5">${st.instructions}</div>
-                      <div class="text-gray-500 text-xs">
-                        ${(st.distance && st.distance.text) || ''} • ${(st.duration && st.duration.text) || ''}
-                      </div>
-                    </div>
-                  </div>`;
+              <div class="flex items-start gap-2">
+                <div class="text-xl leading-none">${arrowFor(st.maneuver || st.instructions)}</div>
+                <div class="flex-1">
+                  <div class="leading-5">${st.instructions}</div>
+                  <div class="text-gray-500 text-xs">
+                    ${(st.distance && st.distance.text) || ''} • ${(st.duration && st.duration.text) || ''}
+                  </div>
+                </div>
+              </div>`;
               stepsEl.appendChild(li);
             });
           }

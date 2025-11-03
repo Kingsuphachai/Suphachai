@@ -1,4 +1,7 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" style="background: linear-gradient(to right, #7c3aed, #8b5cf6, #a78bfa);
+            border-bottom: 1px solid #6d28d9;
+            box-shadow: 0 3px 10px rgba(109, 40, 217, 0.3);">
+
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
@@ -16,8 +19,8 @@
 
                     <img src="{{ asset('images/ev-logo.png') }}" alt="EV Logo"
                         class="h-9 w-auto transition-transform duration-300 group-hover:scale-105]" />
-                    <span class="text-2xl font-bold text-gray-800">
-                        Charging
+                    <span >
+                                
                     </span>
                 </a>
             </div>
@@ -28,28 +31,27 @@
             <!-- กลาง: ช่องค้นหาแบบยาว อยู่กึ่งกลาง -->
             {{-- (ภายใน navigation.blade.php เฉพาะส่วนกลางฟอร์มค้นหา) --}}
             <div class="flex-1 flex justify-center px-3">
-                <form action="{{ route('stations.map') }}" method="GET"
-                    class="relative w-full max-w-full sm:max-w-xl lg:max-w-3xl">
-                    <input id="q" type="text" name="q" value="{{ request('q') }}" placeholder="ค้นหา..." class="w-full h-9 rounded-full border border-gray-300/70 bg-white/90 shadow-inner
-             pl-4 pr-10 text-sm placeholder-gray-400 outline-none
-             focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 transition" autocomplete="off">
-
-                    {{-- ไอคอนแว่น --}}
-                    <button type="submit"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-600"
-                        aria-label="Search">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M21 21l-4.35-4.35m1.1-5.4a6.75 6.75 0 11-13.5 0 6.75 6.75 0 0113.5 0z" />
-                        </svg>
-                    </button>
+                <div
+                    class="relative w-full max-w-full sm:max-w-xl lg:max-w-3xl rounded-2xl bg-slate-900/95 shadow-lg shadow-indigo-900/30 border border-slate-700/70">
+                    <form action="{{ route('stations.map') }}" method="GET" class="relative flex w-full">
+                        <input id="q" type="text" name="q" value="{{ request('q') }}"
+                            placeholder="ค้นหาหรือเตะในช่องเพื่อดูลิสรายการสถานีบริการ"
+                            class="w-full h-11 rounded-l-2xl bg-slate-900/95 border border-slate-700/70 text-sm text-slate-100 placeholder-slate-400 pl-4 pr-4 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                            autocomplete="off">
+                        <button type="submit"
+                            class="h-11 px-4 rounded-r-2xl bg-gradient-to-br from-violet-500 to-indigo-500 text-white font-medium text-sm flex items-center justify-center transition hover:from-violet-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:ring-offset-2 focus:ring-offset-slate-900">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M21 21l-4.35-4.35M16.65 9.75a6.9 6.9 0 11-13.8 0 6.9 6.9 0 0113.8 0z" />
+                            </svg>
+                        </button>
+                    </form>
 
                     {{-- กล่องลิสต์ Suggest (ให้ JS เติม) --}}
-                    <div id="qSuggest" class="absolute left-0 right-0 mt-2 bg-white text-gray-800 rounded-xl shadow-lg border
-                hidden max-h-80 overflow-auto z-50">
+                    <div id="qSuggest"
+                        class="absolute left-0 right-0 mt-2 bg-white text-gray-800 rounded-xl shadow-lg border hidden max-h-80 overflow-auto z-50">
                     </div>
-                </form>
+                </div>
             </div>
 
 
@@ -61,7 +63,7 @@
                             <x-slot name="trigger">
                                 <button
                                     class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4
-                                                                                                       font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition">
+                                                                                                                           font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition">
                                     <div>ยินดีต้อนรับคุณ {{ Auth::user()?->name }}</div>
                                     <div class="ms-1">
                                         <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
@@ -94,14 +96,20 @@
                 @endauth
 
                 @guest
-                    <div class="flex items-center gap-4">
-                        <a href="{{ route('login') }}" class="">{{ __('เข้าสู่ระบบ') }}</a>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('login') }}"
+                            class="px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white font-medium shadow-md hover:shadow-lg hover:from-indigo-500 hover:to-purple-600 transition-all duration-300">
+                            🔐 เข้าสู่ระบบ
+                        </a>
+
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="">
-                                {{ __('ลงทะเบียน') }}
+                            <a href="{{ route('register') }}"
+                                class="px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white font-medium shadow-md hover:shadow-lg hover:from-indigo-500 hover:to-purple-600 transition-all duration-300">
+                                ✨ ลงทะเบียน
                             </a>
                         @endif
                     </div>
+
                 @endguest
             </div>
 

@@ -8,7 +8,7 @@
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('ชื่อ')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required
+            <x-text-input id="name" placeholder="กรุณากรอกชื่อของคุณ" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required
                 autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
@@ -16,7 +16,7 @@
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('อีเมล')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required
+            <x-text-input id="email" placeholder="กรุณากรอกอีเมลของคุณ" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required
                 autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
@@ -25,7 +25,7 @@
         <div class="mt-4">
             <x-input-label for="password" :value="__('รหัสผ่าน')" />
 
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required
+            <x-text-input id="password"  placeholder="กรุณากรอกรหัสของคุณ" class="block mt-1 w-full" type="password" name="password" required
                 autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
@@ -35,7 +35,7 @@
         <div class="mt-4">
             <x-input-label for="password_confirmation" :value="__('ยืนยันรหัสผ่าน')" />
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password"
+            <x-text-input id="password_confirmation"  placeholder="กรุณายืนยันรหัสผ่านของคุณ" class="block mt-1 w-full" type="password"
                 name="password_confirmation" required autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />

@@ -20,7 +20,7 @@ class ChargingStation extends Model
     public function getImageUrlAttribute(): ?string
     {
         // คืน URL ของไฟล์จาก storage/public หรือ null ถ้าไม่มี
-        return $this->image ? Storage::disk('public')->url($this->image) : null;
+        return $this->image ? Storage::url($this->image) : null;
     }
 
     // 🔹 (แนะนำ) ให้ Laravel serialize image_url อัตโนมัติเมื่อแปลงเป็น JSON

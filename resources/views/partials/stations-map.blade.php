@@ -10,6 +10,7 @@
     display: flex;
     gap: 10px;
   }
+
   .map-infobox-btn {
     flex: 1;
     display: inline-flex;
@@ -24,33 +25,39 @@
     cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
   }
+
   .map-infobox-btn:focus {
     outline: 2px solid #6366f1;
     outline-offset: 2px;
   }
+
   .map-infobox-btn--primary {
     background: #7c3aed;
     color: #fff;
     border-color: #6d28d9;
     box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
   }
+
   .map-infobox-btn--primary:hover,
   .map-infobox-btn--primary:focus-visible {
     background: #6d28d9;
     transform: translateY(-1px);
     box-shadow: 0 6px 14px rgba(124, 58, 237, 0.35);
   }
+
   .map-infobox-btn--secondary {
     background: #f3f4f6;
     color: #1f2937;
     border-color: #d1d5db;
   }
+
   .map-infobox-btn--secondary:hover,
   .map-infobox-btn--secondary:focus-visible {
     background: #e5e7eb;
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(17, 24, 39, 0.15);
   }
+
   .ev-modal {
     position: fixed;
     inset: 0;
@@ -60,19 +67,25 @@
     padding: 24px 16px;
     z-index: 100000;
   }
+
   .ev-modal.is-open {
     display: flex;
   }
+
   .ev-modal__backdrop {
     position: absolute;
     inset: 0;
     background: rgba(17, 24, 39, 0.45);
     backdrop-filter: saturate(180%) blur(6px);
   }
+
   .ev-modal__panel {
     position: relative;
-    width: min(960px, 100%);
-    max-height: 90vh;
+    width: min(780px, 94vw);
+    height: 90vh;
+    /* ⬅️ เพิ่มบรรทัดนี้ */
+    max-height: none;
+    /* ⬅️ ปิดจำกัดความสูงเดิม */
     background: #fff;
     border-radius: 24px;
     box-shadow: 0 24px 60px rgba(17, 24, 39, 0.32);
@@ -80,19 +93,22 @@
     display: flex;
     flex-direction: column;
   }
+
   .ev-modal__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 18px 22px;
     border-bottom: 1px solid #e5e7eb;
-    background: linear-gradient(90deg, rgba(124,58,237,0.08), rgba(124,58,237,0));
+    background: linear-gradient(90deg, rgba(124, 58, 237, 0.08), rgba(124, 58, 237, 0));
   }
+
   .ev-modal__title {
     font-size: 20px;
     font-weight: 600;
     color: #111827;
   }
+
   .ev-modal__close {
     border: none;
     background: transparent;
@@ -101,19 +117,23 @@
     cursor: pointer;
     color: #4b5563;
   }
+
   .ev-modal__close:hover {
     color: #1f2937;
   }
+
   .ev-modal__body {
     flex: 1;
     background: #f8fafc;
   }
+
   .ev-modal__iframe {
     width: 100%;
     height: 100%;
     border: none;
     background: #fff;
   }
+
   body.modal-open {
     overflow: hidden;
   }
@@ -135,6 +155,21 @@
 @push('scripts')
   <script>
     (() => {
+
+      // 🎨 โทนม่วงสบายตา
+      const EV_PURPLE_STYLE = [
+        { elementType: "geometry", stylers: [{ color: "#f3f4f6" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#4c1d95" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+        { featureType: "poi", stylers: [{ visibility: "off" }] },
+        { featureType: "road", elementType: "geometry", stylers: [{ color: "#e5e7eb" }] },
+        { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#ddd6fe" }] },
+        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#c4b5fd" }] },
+        { featureType: "road.local", elementType: "geometry", stylers: [{ color: "#ede9fe" }] },
+        { featureType: "water", elementType: "geometry", stylers: [{ color: "#dbeafe" }] },
+        { featureType: "administrative", elementType: "labels.text.fill", stylers: [{ color: "#6b21a8" }] },
+      ];
+
       /* =============== ตั้งความสูงให้เต็มหน้าจอ แต่ไม่ทับ Navbar =============== */
       function adjustMapHeight() {
         const wrap = document.getElementById('mapWrap');
@@ -237,9 +272,9 @@
         const raw = safeText(s.status, '').trim();
         const lower = raw.toLowerCase();
         const id = Number.isFinite(Number(s.status_id)) ? Number(s.status_id) : null;
-        if (id === 1 || /(พร้อม|available|ready)/.test(lower)) return '🟢 พร้อมใช้งาน';
-        if (id === 2 || /(ชำรุด|เสีย|out\s*of\s*service|down)/.test(lower)) return '🔴 ชำรุด';
-        if (id === 0 || /(รอ|pending|ตรวจสอบ|maintenance|คิว)/.test(lower)) return '🟡 รอตรวจสอบ';
+        if (id === 1 || /(พร้อม|available|ready)/.test(lower)) return 'พร้อมใช้งาน 🟢';
+        if (id === 2 || /(ชำรุด|เสีย|out\s*of\s*service|down)/.test(lower)) return 'ชำรุด 🔴 ';
+        if (id === 0 || /(รอ|pending|ตรวจสอบ|maintenance|คิว)/.test(lower)) return 'รอตรวจสอบ ';
         if (raw) return `⚪ ${raw}`;
         return '⚪ ไม่ระบุ';
       }
@@ -265,9 +300,9 @@
         const actions = (() => {
           const navigateUrl = `${SHOW_BASE_URL}/${s.id}/navigate`;
           const button = (label, classes, attrs = '') => `
-              <button type="button" class="map-infobox-btn ${classes}" ${attrs}>
-                ${label}
-              </button>`;
+                  <button type="button" class="map-infobox-btn ${classes}" ${attrs}>
+                    ${label}
+                  </button>`;
 
           if (userRole === 'admin') {
             const editUrl = `/admin/stations/${s.id}/edit?inline=1`;
@@ -287,22 +322,22 @@
         })();
 
         return `
-        <div style="min-width:260px;max-width:320px">
-          <div style="margin:-8px -8px 8px -8px;">
-            <img src="${imgSrc}" alt="${s.name ?? ''}"
-                 style="width:100%;height:150px;object-fit:cover;border-radius:8px 8px 0 0;" loading="lazy">
-          </div>
-          <div style="font-weight:700;font-size:15px">${stationName}</div>
-          <div style="font-size:13px;color:#374151;margin-top:2px">${addressLine || '-'}</div>
-          <div style="font-size:13px;margin-top:6px">
-            <div><b>สถานะ:</b> ${statusLabel}</div>
-            <div><b>เวลาทำการ:</b> ${safeText(s.operating_hours, 'ไม่ระบุ')}</div>
-            <div><b>ประเภทหัวชาร์จ:</b> ${chargerLabel}</div>
-          </div>
-          <div class="map-infobox-actions">
-            ${actions}
-          </div>
-        </div>`;
+            <div style="min-width:260px;max-width:320px">
+              <div style="margin:-8px -8px 8px -8px;">
+                <img src="${imgSrc}" alt="${s.name ?? ''}"
+                     style="width:100%;height:150px;object-fit:cover;border-radius:8px 8px 0 0;" loading="lazy">
+              </div>
+              <div style="font-weight:700;font-size:15px">${stationName}</div>
+              <div style="font-size:13px;color:#374151;margin-top:2px">${addressLine || '-'}</div>
+              <div style="font-size:13px;margin-top:6px">
+                <div><b>สถานะ:</b> ${statusLabel}</div>
+                <div><b>เวลาทำการ:</b> ${safeText(s.operating_hours, 'ไม่ระบุ')}</div>
+                <div><b>ประเภทหัวชาร์จ:</b> ${chargerLabel}</div>
+              </div>
+              <div class="map-infobox-actions">
+                ${actions}
+              </div>
+            </div>`;
       }
 
 
@@ -372,21 +407,21 @@
           const status = statusInfo(item);
           const statusHtml = status
             ? `<span class="inline-flex items-center px-2 py-[2px] rounded-full text-[10px] font-medium"
-                       style="background-color:${status.pillBg};color:${status.pillText};border:1px solid ${status.pillBorder};">
-                    ${status.label}
-                 </span>`
+                           style="background-color:${status.pillBg};color:${status.pillText};border:1px solid ${status.pillBorder};">
+                        ${status.label}
+                     </span>`
             : '';
           return `
-                  <button type="button" class="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-start gap-3" data-id="${item.id}">
-                    <div class="mt-1 text-base">📍</div>
-                    <div class="flex-1">
-                      <div class="font-medium">${item.name}</div>
-                      <div class="text-xs text-gray-500">${item._addr || ''}</div>
-                      <div class="mt-1 text-xs text-gray-600">${item._dist ? (item._dist.toFixed(1) + ' กม.') : ''}</div>
-                      ${statusHtml ? `<div class="mt-1">${statusHtml}</div>` : ''}
-                    </div>
-                  </button>
-                `;
+                      <button type="button" class="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-start gap-3" data-id="${item.id}">
+                        <div class="mt-1 text-base">📍</div>
+                        <div class="flex-1">
+                          <div class="font-medium">${item.name}</div>
+                          <div class="text-xs text-gray-500">${item._addr || ''}</div>
+                          <div class="mt-1 text-xs text-gray-600">${item._dist ? (item._dist.toFixed(1) + ' กม.') : ''}</div>
+                          ${statusHtml ? `<div class="mt-1">${statusHtml}</div>` : ''}
+                        </div>
+                      </button>
+                    `;
         }).join('');
         box.classList.remove('hidden');
 
@@ -410,6 +445,7 @@
           zoom: 11,
           mapTypeControl: false,
           fullscreenControl: true,
+          styles: EV_PURPLE_STYLE,
         });
         infoWindow = new google.maps.InfoWindow();
         infoWindow.addListener('domready', () => {

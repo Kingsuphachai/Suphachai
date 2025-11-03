@@ -39,10 +39,16 @@ Route::middleware(['auth', 'is_admin'])
             ->name('notifications.index');
         Route::post('/notifications/read-all', [\App\Http\Controllers\Admin\AdminNotificationController::class,'readAll'])
             ->name('notifications.read_all');
+            Route::get('/notifications/{id}/redirect',
+    [\App\Http\Controllers\Admin\AdminNotificationController::class, 'redirect']
+)->name('notifications.redirect');
+
+
 
         // Reports
         Route::get('/reports',                 [AdminReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/{report}',        [AdminReportController::class, 'show'])->name('reports.show');
+        Route::post('/reports/{report}/confirm',[AdminReportController::class, 'confirm'])->name('reports.confirm');
         Route::post('/reports/{report}/resolve',[AdminReportController::class, 'resolve'])->name('reports.resolve');
         Route::post('/reports/{report}/reject', [AdminReportController::class, 'reject'])->name('reports.reject');
         Route::delete('/reports/{report}',     [AdminReportController::class, 'destroy'])->name('reports.destroy');

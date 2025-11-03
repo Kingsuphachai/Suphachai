@@ -57,6 +57,10 @@
             background: #f9f5ff;
         }
 
+        .floating-actions__label {
+            color: #0f172a;
+        }
+
         /* จอแคบมาก ให้แตกเป็น 3x2 แต่ยังอยู่ล่าง-กึ่งกลาง */
         @media (max-width: 560px) {
             .floating-actions__list {
@@ -453,7 +457,9 @@
                         @forelse($stations as $station)
                             <tr>
                                 <td class="p-2 border">
-                                    {{ ($stations->currentPage() - 1) * $stations->perPage() + $loop->iteration }}
+                                    <div class="flex items-center justify-center h-full">
+                                        {{ ($stations->currentPage() - 1) * $stations->perPage() + $loop->iteration }}
+                                    </div>
                                 </td>
                                 <td class="p-2 border">{{ $station->name }}</td>
                                 <td class="p-2 border">
@@ -483,21 +489,21 @@
                                     </div>
                                 </td>
                                 <td class="p-2 border">
-                                    <div class="flex flex-wrap gap-2">
-                                        <a href="{{ route('admin.stations.edit', $station) }}"
-                                            class="inline-flex items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-100 hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1">
-                                            แก้ไข
-                                        </a>
-                                        <form action="{{ route('admin.stations.destroy', $station) }}" method="POST"
-                                            class="inline-block" onsubmit="return confirm('ยืนยันลบสถานีนี้?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="inline-flex items-center justify-center rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-1">
-                                                ลบ
-                                            </button>
-                                        </form>
-                                    </div>
+
+                                    <a href="{{ route('admin.stations.edit', $station) }}"
+                                        class="inline-flex items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-100 hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1">
+                                        แก้ไข
+                                    </a>
+                                    <form action="{{ route('admin.stations.destroy', $station) }}" method="POST"
+                                        class="inline-block" onsubmit="return confirm('ยืนยันลบสถานีนี้?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="inline-flex items-center justify-center rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-1">
+                                            ลบ
+                                        </button>
+                                    </form>
+
                                 </td>
 
                             </tr>

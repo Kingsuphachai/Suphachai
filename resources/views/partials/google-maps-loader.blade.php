@@ -15,6 +15,6 @@
 </script>
 
 <script
-  src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=onGoogleMapsReady"
+  src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=onGoogleMapsReady&language=th&region=TH&libraries=geometry"
   async
 ></script>

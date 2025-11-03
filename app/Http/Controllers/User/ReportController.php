@@ -13,6 +13,8 @@ class ReportController extends Controller
     // หน้าแบบฟอร์ม
     public function create()
     {
+
+        
         // ดึงสถานีเฉพาะที่ "มองเห็นได้" (เช่น status_id != 0) หรือทั้งหมดก็ได้
         $stations = ChargingStation::with('district')
             ->orderBy('name')

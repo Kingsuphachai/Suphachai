@@ -13,13 +13,13 @@
         <div><b>ผู้ส่ง:</b> {{ $report->user->name ?? '-' }} ({{ $report->user->email ?? '-' }})</div>
         <div><b>สถานี:</b> {{ $report->station->name ?? '-' }}</div>
         <div><b>ประเภท:</b>
-          @php $types = ['no_power'=>'ไม่มีไฟ', 'occupied'=>'ไม่ว่าง', 'broken'=>'ชำรุด', 'other'=>'อื่น ๆ']; @endphp
+          @php $types = ['no_power' => 'ไม่มีไฟ', 'occupied' => 'ไม่ว่าง', 'broken' => 'ชำรุด', 'other' => 'อื่น ๆ']; @endphp
           {{ $types[$report->type] ?? $report->type }}
         </div>
-        <div><b>ข้อความ:</b> <div class="mt-1 whitespace-pre-line">{{ $report->message }}</div></div>
+        <div><b>ข้อความ:</b> {{ $report->message }}</div>
         <div><b>สถานะ:</b>
           @php
-            $label = ['0'=>'รอตรวจสอบ','1'=>'ปิดงานแล้ว','2'=>'ปฏิเสธ'][$report->status] ?? '-';
+            $label = ['0' => 'รอตรวจสอบ', '1' => 'ปิดงานแล้ว', '2' => 'ปฏิเสธ'][$report->status] ?? '-';
           @endphp
           {{ $label }}
         </div>
@@ -30,7 +30,7 @@
         @if($report->status !== 1)
           <form method="POST" action="{{ route('admin.reports.resolve', $report) }}">
             @csrf
-            <button class="px-4 py-2 bg-green-600 text-white rounded" onclick="return confirm('ยืนยันปิดงานรายงานนี้?')">
+            <button class="px-4 py-2 border rounded" onclick="return confirm('ยืนยันปิดงานรายงานนี้?')">
               ปิดงาน
             </button>
           </form>
@@ -39,16 +39,16 @@
         @if($report->status !== 2)
           <form method="POST" action="{{ route('admin.reports.reject', $report) }}">
             @csrf
-            <button class="px-4 py-2 bg-yellow-600 text-white rounded" onclick="return confirm('ยืนยันปฏิเสธรายงานนี้?')">
+            <button class="px-4 py-2 border rounded" onclick="return confirm('ยืนยันปฏิเสธรายงานนี้?')">
               ปฏิเสธ
             </button>
           </form>
         @endif
 
-        <a href="{{ route('admin.reports.index') }}" class="px-4 py-2 border rounded">กลับ</a>
+        <a href="{{ route('admin.reports.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded">กลับ</a>
 
         <form method="POST" action="{{ route('admin.reports.destroy', $report) }}" class="ml-auto"
-              onsubmit="return confirm('ยืนยันลบรายงานนี้?')">
+          onsubmit="return confirm('ยืนยันลบรายงานนี้?')">
           @csrf @method('DELETE')
           <button class="px-4 py-2 bg-red-600 text-white rounded">ลบ</button>
         </form>

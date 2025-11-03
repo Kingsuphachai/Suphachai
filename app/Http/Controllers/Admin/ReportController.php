@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Report;
 use App\Models\ChargingStation;
+use App\Models\StationStatus;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -78,5 +80,35 @@ class ReportController extends Controller
     {
         $report->delete();
         return redirect()->route('admin.reports.index')->with('success', 'ลบรายงานเรียบร้อย');
+    }
+
+    // ยืนยันรายงาน -> เปลี่ยนสถานีเป็นสถานะชำรุด
+    public function confirm(Report $report)
+    {
+        $report->load('station');
+
+        DB::transaction(function () use ($report) {
+            if ($report->station) {
+                $brokenStatusId = StationStatus::query()
+                    ->where('name', 'like', '%ชำรุด%')
+                    ->orWhere('name', 'like', '%เสีย%')
+                    ->value('id');
+
+                if (!$brokenStatusId) {
+                    $brokenStatusId = 2; // fallback สำหรับข้อมูลเดิม
+                }
+
+                if ($report->station->status_id !== $brokenStatusId) {
+                    $report->station->status_id = $brokenStatusId;
+                    $report->station->save();
+                }
+            }
+
+            $report->delete();
+        });
+
+        return redirect()
+            ->route('admin.reports.index')
+            ->with('success', 'ยืนยันรายงานเรียบร้อย และเปลี่ยนสถานะสถานีเป็นชำรุดแล้ว');
     }
 }

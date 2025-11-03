@@ -75,6 +75,8 @@ class StationController extends Controller
             'stations' => $stations,
             'districts' => District::orderBy('name')->get(['id','name']),
             'statuses'  => StationStatus::orderBy('id')->get(['id','name']),
+            'subdistricts' => Subdistrict::orderBy('name')->get(['id','name','district_id']),
+            'chargers'     => ChargerType::orderBy('name')->get(['id','name']),
             'filters'   => $request->only('q','district_id','status_id'),
         ]);
     }
@@ -132,18 +134,24 @@ return redirect()->route('admin.stations.index')->with('success','เพิ่�
 
     }
 
-    public function edit(ChargingStation $station)
+    public function edit(Request $request, ChargingStation $station)
     {
         $station->load('chargers');
 
-        return view('admin.stations.edit', [
+        $viewData = [
             'station'         => $station,
             'districts'       => District::orderBy('name')->get(['id','name']),
             'subdistricts'    => Subdistrict::orderBy('name')->get(['id','name','district_id']),
             'statuses'        => StationStatus::orderBy('id')->get(['id','name']),
             'chargers'        => ChargerType::orderBy('name')->get(['id','name']),
             'selectedChargers'=> $station->chargers->pluck('id')->all(),
-        ]);
+        ];
+
+        if ($request->boolean('inline')) {
+            return view('admin.stations.edit-inline', $viewData);
+        }
+
+        return view('admin.stations.edit', $viewData);
     }
 
 public function update(Request $request, ChargingStation $station)
@@ -192,6 +200,12 @@ public function update(Request $request, ChargingStation $station)
     ])->save();
 
     $station->chargers()->sync($data['charger_type_ids'] ?? []);
+
+    if ($request->boolean('inline')) {
+        return redirect()
+            ->route('admin.stations.edit', ['station' => $station->id, 'inline' => 1])
+            ->with('success', 'อัปเดตสถานีเรียบร้อย');
+    }
 
     return redirect()->route('admin.stations.index')->with('success','อัปเดตสถานีเรียบร้อย');
 

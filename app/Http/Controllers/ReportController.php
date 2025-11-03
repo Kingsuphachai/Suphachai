@@ -14,18 +14,27 @@ use Illuminate\Support\Facades\Schema;
 
 class ReportController extends Controller
 {
+    /**
+     * รายการประเภทปัญหาที่ให้ผู้ใช้เลือก
+     */
+    private const TYPE_OPTIONS = [
+        'no_power' => 'ไม่มีไฟ / ใช้งานไม่ได้',
+        'occupied' => 'มีรถจอดขวาง/ไม่ว่าง',
+        'broken'   => 'เครื่องชำรุด',
+        'other'    => 'อื่น ๆ',
+    ];
+
     public function create(Request $request)
     {
-        $stations = ChargingStation::orderBy('name')->get(['id','name']);
-        $prefillStation = $request->query('station');
+        $stations = ChargingStation::where('status_id', '!=', 0)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+        $stations = ChargingStation::where('status_id', 1)
+            ->orderBy('name')
+            ->get(['id','name']);
+        $prefillStation = $request->query('station_id') ?? $request->query('station');
 
-        $types = [
-            'offline'   => 'ตู้/ระบบล่ม',
-            'broken'    => 'หัวชาร์จชำรุด',
-            'payment'   => 'ชำระเงิน/บิล',
-            'occupied'  => 'ที่จอดถูกกีดกัน',
-            'other'     => 'อื่น ๆ',
-        ];
+        $types = self::TYPE_OPTIONS;
 
         return view('user.report_station', compact('stations', 'prefillStation', 'types'));
     }
@@ -33,8 +42,10 @@ class ReportController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'station_id' => ['required', Rule::exists('charging_stations', 'id')],
-            'type'       => ['required', Rule::in(['offline','broken','payment','occupied','other'])],
+            'station_id' => ['required', Rule::exists('charging_stations', 'id')->where(function ($query) {
+                $query->where('status_id', 1);
+            })],
+            'type'       => ['required', Rule::in(array_keys(self::TYPE_OPTIONS))],
             'message'    => ['required','string','max:2000'],
         ]);
 
