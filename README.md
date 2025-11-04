@@ -1,62 +1,43 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ระบบแสดงข้อมูลสถานีชาร์จรถยนต์ไฟฟ้า จังหวัดสกลนคร (Sakol EV Charging)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+เว็บไซต์แสดงข้อมูลสถานีชาร์จรถยนต์ไฟฟ้าในจังหวัดสกลนคร  
+พัฒนาโดยใช้ **Laravel 11**, **Tailwind CSS**, และ **Google Maps API**  
+เพื่อให้ผู้ใช้งานสามารถค้นหาสถานีชาร์จใกล้เคียงได้อย่างสะดวกและรวดเร็ว
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚗 ฟีเจอร์หลัก
+- แสดงตำแหน่งสถานีชาร์จทั้งหมดบนแผนที่ Google Maps  
+- ค้นหาสถานีตามชื่อหรือพื้นที่  
+- แสดงประเภทหัวชาร์จและสถานะสถานี (พร้อมใช้งาน / ชำรุด / รอตรวจสอบ)  
+- ระบบนำทางไปยังสถานีผ่าน Google Maps  
+- ระบบผู้ใช้ (User / Admin)  
+- ระบบรายงานและแจ้งเตือน  
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🧰 เทคโนโลยีที่ใช้
+- Laravel 11 (PHP Framework)  
+- MySQL (ฐานข้อมูล)  
+- Tailwind CSS (ตกแต่ง UI)  
+- Google Maps API  
+- Vite (ระบบ build assets)  
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 👨‍💻 ผู้พัฒนา
+**นายสุภชัย สุภะกา**  
+สาขาวิชาวิทยาการคอมพิวเตอร์  
+คณะวิทยาศาสตร์และวิศวกรรมศาสตร์  
+มหาวิทยาลัยเกษตรศาสตร์ วิทยาเขตเฉลิมพระเกียรติ จังหวัดสกลนคร  
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📅 ปีการศึกษา
+2567 (โครงงานคอมพิวเตอร์)
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# sakol_ev_charging
+> 🛡️ **หมายเหตุ:**  
+> เพื่อความปลอดภัย ไฟล์ `.env`, `vendor/`, และ `node_modules/`  
+> ไม่ได้ถูกเผยแพร่ใน repository นี้
